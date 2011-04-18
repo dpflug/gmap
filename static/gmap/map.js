@@ -1,4 +1,5 @@
 var myLatlng = new Array();
+var open_marker = '';
 
 myLatlng[0] = new google.maps.LatLng(28.5000, -81.4500);
 var myOptions = {
@@ -21,6 +22,10 @@ marker_window[0] = new google.maps.InfoWindow({
     content: marker_content[0]
 });
 google.maps.event.addListener(marker[0], 'click', function() {
+    if (open_marker != '') {
+        open_marker.close();
+    }
+    open_marker = marker_window[0];
     marker_window[0].open(map, marker[0]);
 });
 {% autoescape on %}
@@ -42,6 +47,10 @@ marker_window[{{ forloop.counter }}] = new google.maps.InfoWindow({
     content: marker_content[{{ forloop.counter }}]
 });
 google.maps.event.addListener(marker[{{ forloop.counter }}], 'click', function() {
+    if (open_marker != '') {
+        open_marker.close();
+    }
+    open_marker = marker_window[{{ forloop.counter }}];
     marker_window[{{ forloop.counter }}].open(map, marker[{{ forloop.counter }}]);
 });
 {% endfor %}
