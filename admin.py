@@ -3,7 +3,16 @@ from gmap.models import MapMarker, MarkerType
 
 
 class MarkerAdmin(admin.ModelAdmin):
-    list_display = ['name', 'marker_type', 'location']
+    list_display = [
+            'name',
+            'marker_type',
+            'airport_code',
+            'address',
+            'phone',
+            'fax',
+            'email',
+            'url'
+           ]
     exclude = ('latitude', 'longitude')
 
 
