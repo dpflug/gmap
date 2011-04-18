@@ -1,5 +1,4 @@
 var myLatlng = new Array();
-{% if zip %}
 
 myLatlng[0] = new google.maps.LatLng(28.5000, -81.4500);
 var myOptions = {
