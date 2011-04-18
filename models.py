@@ -20,13 +20,13 @@ class MapMarker(models.Model):
 
     # Make sure we update the lat/long with the location
     def save(self, *args, **kwargs):
+        # TODO: Move the geolocation into a function somewhere
         url = "http://maps.googleapis.com/maps/api/geocode/json?"
         url += urllib.urlencode({'address': self.location, 'sensor': 'false'})
         data = urllib2.urlopen(url).read()
         data = json.loads(data)
         self.latitude = data['results'][0]['geometry']['location']['lat']
         self.longitude = data['results'][0]['geometry']['location']['lng']
-        print(self.latitude, self.longitude)
         super(MapMarker, self).save(*args, **kwargs)
 
     def __unicode__(self):
