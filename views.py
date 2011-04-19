@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from gmap.models import MapMarker
+from gmap.models import MapMarker, MarkerType
 
 
 def showmap(request, zipcode):
@@ -17,3 +17,9 @@ def markers(request):
     context['map_markers'] = MapMarker.objects.all()
 
     return render(request, 'map.js', context)
+
+
+def gmap_search(request):
+    context = {}
+    context['marker_types'] = MarkerType.objects.all()
+    return render(request, 'map_search.html', context)

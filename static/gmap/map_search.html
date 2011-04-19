@@ -1,0 +1,9 @@
+<div id="gmap_search">
+    <form id="gmap_search_form" onsubmit="gmaps_search()">
+        <input type="search" id="gmap_search" placeholder="55811" autofocus>
+        {{ for category in marker_types }}
+        <input type="checkbox" checked name="{{ category }}" id="gmap_category{{ forloop.counter }}">
+        {{ endfor }}
+        <input type="submit" value="Search" id="gmap_search_submit">
+    </form>
+</div>
