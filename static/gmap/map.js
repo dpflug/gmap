@@ -2,32 +2,17 @@ var myLatlng = new Array();
 var open_marker = '';
 
 myLatlng[0] = new google.maps.LatLng(28.5000, -81.4500);
+
 var myOptions = {
-    zoom: 10,
+    zoom: 1,
     center: myLatlng[0],
     mapTypeId: google.maps.MapTypeId.ROADMAP
 }
-var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+var map = new google.maps.Map(document.getElementById("gmap_canvas"), myOptions);
 
 var marker = new Array();
 var marker_content = new Array();
 var marker_window = new Array();
-marker[0] = new google.maps.Marker({
-    position: myLatlng[0],
-    map: map,
-    title: "Hello world! " + "0"
-});
-marker_content[0] = 'This is a test window.'
-marker_window[0] = new google.maps.InfoWindow({
-    content: marker_content[0]
-});
-google.maps.event.addListener(marker[0], 'click', function() {
-    if (open_marker != '') {
-        open_marker.close();
-    }
-    open_marker = marker_window[0];
-    marker_window[0].open(map, marker[0]);
-});
 {% autoescape on %}
 {% for marker in map_markers %}
 myLatlng[{{ forloop.counter }}] = new google.maps.LatLng({{ marker.latitude }}, {{ marker.longitude }});
