@@ -59,7 +59,7 @@ google.maps.event.addListener(
 
 {% endfor %}
 
-function closeCategory(category) {
+function toggleCategory(category) {
     for (marker in markers[category]) {
         if (typeof category_visible == 'undefined') {
             // Set a variable for the whole category so things don't get out of sorts if people get click-happy
@@ -68,7 +68,6 @@ function closeCategory(category) {
         };
         markers[category][marker]['marker'].setVisible(category_visible);
     }
-    category_visible = undefined;
     return false;
 }
 

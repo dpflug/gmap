@@ -7,9 +7,9 @@
     {% if marker_types %}
     <div id="gmap_buttons">
         <span>Toggle category: </span>
-        <form action="#">
+        <form>
         {% for category in marker_types %}
-        <input type="submit" id="gmap_button_{{ forloop.counter }}" value="{{ category }}" onclick="closeCategory('{{ category }}')">
+        <input type="button" id="gmap_button_{{ forloop.counter }}" value="{{ category }}" onclick="toggleCategory('{{ category }}')">
         {% if not forloop.last %}
         <span id="gmap_button_divider_{{ forloop.counter }}">|</span>
         {% endif %}
