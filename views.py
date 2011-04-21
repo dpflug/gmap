@@ -6,6 +6,7 @@ from gmap.models import MapMarker, MarkerType
 def showmap(request, address=''):
     context = {}
     context['map_markers'] = MapMarker.objects.all()
+    context['marker_types'] = MarkerType.objects.all()
 
     if request.method == 'GET':
         address = request.GET.get('address', address)
@@ -24,6 +25,7 @@ def showmap(request, address=''):
 def markers(request):
     context = {}
     context['map_markers'] = MapMarker.objects.all()
+    context['marker_types'] = MarkerType.objects.all()
 
     return render(request, 'map.js', context)
 
