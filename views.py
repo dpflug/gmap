@@ -19,7 +19,7 @@ def showmap(request, address=''):
         else:
             context['error'] = "Please try another address."
 
-    return render(request, 'map.html', context)
+    return render(request, 'gmap.html', context)
 
 
 def markers(request):
@@ -27,9 +27,9 @@ def markers(request):
     context['map_markers'] = MapMarker.objects.all()
     context['marker_types'] = MarkerType.objects.all()
 
-    return render(request, 'map.js', context)
+    return render(request, 'gmap.js', context)
 
 
 def gmap_search(request):
     context = {}
-    return render(request, 'map_search.html', context)
+    return render(request, 'gmap_search.html', context)
