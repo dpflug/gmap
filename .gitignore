@@ -30,3 +30,6 @@
 
 # Dotfile droppings
 .*
+
+# Django draff
+/static/
