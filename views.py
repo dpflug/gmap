@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from gmap.utils import geolocate
 from gmap.models import MapMarker, MarkerType
@@ -7,6 +8,7 @@ def showmap(request, address=''):
     context = {}
     context['map_markers'] = MapMarker.objects.all()
     context['marker_types'] = MarkerType.objects.all()
+    context['media_url'] = settings.MEDIA_URL
 
     if request.method == 'GET':
         address = request.GET.get('address', address)

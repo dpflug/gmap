@@ -4,6 +4,10 @@ from gmap.utils import geolocate
 
 class MarkerType(models.Model):
     category_name = models.CharField("type", max_length=200, unique=True)
+    category_icon = models.ImageField("icon",
+            blank=True, upload_to="gmap-icons/")
+    category_shadow = models.ImageField("icon shadow",
+            blank=True, upload_to="gmap-icons/")
 
     def __unicode__(self):
         return self.category_name

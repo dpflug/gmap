@@ -32,6 +32,12 @@ markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'] 
     map: map,
     title: "{{ marker|escapejs }}"
 });
+{% if marker.marker_type.category_icon %}
+markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setIcon('{{ marker.marker_type.category_icon.url }}');
+{% endif %}
+{% if marker.marker_type.category_shadow %}
+markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setShadow('{{ marker.marker_type.category_shadow.url }}');
+{% endif %}
 markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['content'] =
     '<p>Title: {{ marker|escapejs }}</p>' +
     '<p>Airport code: {{ marker.airport_code|escapejs }}</p>' +
