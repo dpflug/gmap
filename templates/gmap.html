@@ -4,6 +4,8 @@
     {% if error %}
     <div id="gmap_error">{{ error }}</div>
     {% endif %}
+    {% load gmap_tags %}
+    {% gmap_marker_types as marker_types %}
     {% if marker_types %}
     <div id="gmap_buttons">
         <span>Toggle category: </span>

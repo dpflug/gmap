@@ -6,8 +6,7 @@ from gmap.models import MapMarker, MarkerType
 
 def showmap(request, address=''):
     context = {}
-    context['map_markers'] = MapMarker.objects.all()
-    context['marker_types'] = MarkerType.objects.all()
+    context['gmap_markers'] = MapMarker.objects.all()
     context['media_url'] = settings.MEDIA_URL
 
     if request.method == 'GET':
@@ -16,8 +15,8 @@ def showmap(request, address=''):
     if address:
         latlng = geolocate(address)
         if latlng:
-            context['map_center_lat'] = latlng['latitude']
-            context['map_center_lng'] = latlng['longitude']
+            context['gmap_center_lat'] = latlng['latitude']
+            context['gmap_center_lng'] = latlng['longitude']
         else:
             context['error'] = "Please try another address."
 
@@ -26,8 +25,7 @@ def showmap(request, address=''):
 
 def markers(request):
     context = {}
-    context['map_markers'] = MapMarker.objects.all()
-    context['marker_types'] = MarkerType.objects.all()
+    context['gmap_markers'] = MapMarker.objects.all()
 
     return render(request, 'gmap.js', context)
 

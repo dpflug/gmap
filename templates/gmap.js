@@ -18,11 +18,13 @@ google.maps.event.addListener(map, 'click', function(){
     open_marker = '';
 });
 
+{% load gmap_tags %}
+{% gmap_marker_types as marker_types %}
 {% for category in marker_types %}
 markers['{{ category|escapejs }}'] = [];
 {% endfor %}
 
-{% for marker in map_markers %}
+{% for marker in gmap_markers %}
 markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}'] = [];
 markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['visible'] = true;
 markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['latlng'] =
