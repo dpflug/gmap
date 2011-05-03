@@ -4,13 +4,21 @@ from gmap.utils import geolocate
 from gmap.models import MapMarker, MarkerType
 
 
-def showmap(request, address=''):
+def showmap(request, address='', category=''):
     context = {}
-    context['gmap_markers'] = MapMarker.objects.all()
     context['media_url'] = settings.MEDIA_URL
 
+    if request.method == 'POST':
+        address = request.POST.get('address', address)
+        category = request.POST.get('category', category)
     if request.method == 'GET':
         address = request.GET.get('address', address)
+        category = request.GET.get('category', category)
+
+    if category:
+        context['gmap_markers'] = MapMarker.objects.get(marker_type__category_name__iexact=category)
+    else:
+        context['gmap_markers'] = MapMarker.objects.all()
 
     if address:
         latlng = geolocate(address)
