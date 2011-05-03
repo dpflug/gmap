@@ -33,3 +33,4 @@
 
 # Django draff
 /static/
+migrations/
