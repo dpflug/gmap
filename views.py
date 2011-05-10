@@ -16,7 +16,9 @@ def showmap(request, address='', category=''):
         category = request.GET.get('category', category)
 
     if category:
-        context['gmap_markers'] = MapMarker.objects.get(marker_type__category_name__iexact=category)
+        context['gmap_markers'] = MapMarker.objects.get(
+                marker_type__category_name__iexact=category
+                )
     else:
         context['gmap_markers'] = MapMarker.objects.all()
 

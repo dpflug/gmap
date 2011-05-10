@@ -8,6 +8,7 @@ register = template.Library()
 class GmapMarkers(template.Node):
     def __init__(self, var_name):
         self.var_name = var_name
+
     def render(self, context):
         context[self.var_name] = MapMarker.objects.all()
 
@@ -15,9 +16,11 @@ class GmapMarkers(template.Node):
 class GmapMarkerType(template.Node):
     def __init__(self, var_name):
         self.var_name = var_name
+
     def render(self, context):
         context[self.var_name] = MarkerType.objects.all()
         return ''
+
 
 def marker_types_tag(parser, token):
     try:
@@ -34,7 +37,7 @@ def marker_types_tag(parser, token):
 
 def markers_tag(parser, token):
     try:
-        tag_name, arg = token.contents.split(None,1)
+        tag_name, arg = token.contents.split(None, 1)
     except ValueError:
         raise template.TemplateSyntaxError(
                 "%r tag requires arguments" % token.contents.split()[0])

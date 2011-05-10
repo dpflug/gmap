@@ -23,7 +23,7 @@ class MarkerInline(admin.TabularInline):
 
 
 class MarkerTypeAdmin(admin.ModelAdmin):
-    inlines = [MarkerInline,]
+    inlines = [MarkerInline, ]
 
 admin.site.register(MapMarker, MarkerAdmin)
 admin.site.register(MarkerType, MarkerTypeAdmin)
