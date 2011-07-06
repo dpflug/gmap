@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from gmap.utils import geolocate
 from gmap.models import MapMarker, MarkerType
 
@@ -37,7 +37,7 @@ def markers(request):
     context = {}
     context['gmap_markers'] = MapMarker.objects.all()
 
-    return render(request, 'gmap.js', context)
+    return render_to_response('gmap.js', context, mimetype="text/javascript")
 
 
 def gmap_search(request):

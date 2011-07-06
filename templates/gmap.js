@@ -1,3 +1,5 @@
+window.onload = function(){
+
 var myLatlng = new Array();
 var open_marker = '';
 
@@ -66,9 +68,19 @@ google.maps.event.addListener(
 });
 
 {% endfor %}
+{% if gmap_center_lng %} 
+        new_center = new google.maps.LatLng({{ gmap_center_lat }}, {{ gmap_center_lng }});
+        map.setCenter(new_center);
+        map.setZoom(10);   
+{% endif %}
+
+window.markers = markers
+
+}
 
 function toggleCategory(category) {
-    for (marker in markers[category]) {
+    var markers = window.markers
+    for (marker in window.markers[category]) {
         if (typeof category_visible == 'undefined') {
             // Set a variable for the whole category so things don't get out of sorts if people get click-happy
             var category_visible = !(markers[category][marker]['visible']);
@@ -78,4 +90,3 @@ function toggleCategory(category) {
     }
     return false;
 }
-
