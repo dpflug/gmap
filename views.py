@@ -35,8 +35,8 @@ def showmap(request, address='', category=''):
 
 
 def markers(request):
-    data = serializers.serialize("json", MapMarker.objects.all())
-    return HttpResponse(data)
+    data = serializers.serialize("json", MapMarker.objects.all(),use_natural_keys=True)
+    return HttpResponse(data, mimetype='applicaton/javascript')
 
 def gmap_search(request):
     context = {}

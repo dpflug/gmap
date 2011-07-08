@@ -1,16 +1,25 @@
 from django.db import models
 from gmap.utils import geolocate
 
+class MarkerCategoryManager(models.Manager):
+    def get_by_natural_key(self,name):
+        return self.get(name=name)
 
 class MarkerCategory(models.Model):
+    objects = MarkerCategoryManager()
     name = models.CharField('type', max_length=200, unique=True)
     icon = models.ImageField('icon', blank=True, upload_to='gmap-icons/')
     shadow = models.ImageField('icon shadow', blank=True, upload_to='gmap-icons/')
+    def natural_key(self):
+        return self.name  
     def __unicode__(self):
         return self.name
 
 class MarkerSubCategory(models.Model):
+    objects = MarkerCategoryManager()
     name = models.CharField('Name', max_length=200, unique=True)
+    def natural_key(self):
+        return self.name    
     def __unicode__(self):
         return self.name
 

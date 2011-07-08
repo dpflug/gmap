@@ -1,3 +1,0 @@
-This needs scads of cleanup
-
-A good start would be putting giving the markers a templatetag, I think. There's a partial attempt in there.

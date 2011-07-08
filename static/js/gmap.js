@@ -57,7 +57,7 @@ $(document).ready(function() {
                 categories.push(item.fields.category)
                 $('#gmap_categories').append('<a href="#category_'+item.fields.category+'">'+item.fields.category+'</a>')
             }
-            $.each(item.fields.sub_categories,function(item){
+            $.each(item.fields.sub_categories,function(key,item){
                 if ($.inArray(item,sub_categories) == -1){
                     sub_categories.push(item)
                     $('#gmap_sub_categories').append('<a href="#sub_category_'+item+'">'+item+'</a>')
