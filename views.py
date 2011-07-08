@@ -1,8 +1,9 @@
 from django.conf import settings
+from django.core import serializers
+from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from gmap.utils import geolocate
 from gmap.models import MapMarker
-
 
 def showmap(request, address='', category=''):
     context = {}
@@ -34,11 +35,8 @@ def showmap(request, address='', category=''):
 
 
 def markers(request):
-    context = {}
-    context['gmap_markers'] = MapMarker.objects.all()
-
-    return render_to_response('gmap.js', context, mimetype="text/javascript")
-
+    data = serializers.serialize("json", MapMarker.objects.all())
+    return HttpResponse(data)
 
 def gmap_search(request):
     context = {}

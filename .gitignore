@@ -32,5 +32,4 @@
 .*
 
 # Django draff
-/static/
 migrations/

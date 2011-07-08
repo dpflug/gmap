@@ -1,83 +1,3 @@
-window.onload = function(){
-
-var myLatlng = new Array();
-var open_marker = '';
-
-myLatlng[0] = new google.maps.LatLng(28.5000, -81.4500);
-
-var map = new google.maps.Map(document.getElementById("gmap_canvas"), {
-    zoom: 1,
-    center: myLatlng[0],
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-});
-
-var markers = [];
-
-google.maps.event.addListener(map, 'click', function(){
-    if (open_marker != '') {
-        open_marker.close();
-    }
-    open_marker = '';
-});
-
-{% load gmap_tags %}
-{% gmap_marker_types as marker_types %}
-{% for category in marker_types %}
-markers['{{ category|escapejs }}'] = [];
-{% endfor %}
-
-{% for marker in gmap_markers %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}'] = [];
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['visible'] = true;
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['latlng'] =
-    new google.maps.LatLng({{ marker.latitude }}, {{ marker.longitude }});
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'] = new google.maps.Marker({
-    position: markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['latlng'],
-    map: map,
-    title: "{{ marker|escapejs }}"
-});
-{% if marker.marker_type.icon %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setIcon('{{ marker.marker_type.icon.url }}');
-{% endif %}
-{% if marker.marker_type.shadow %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setShadow('{{ marker.marker_type.shadow.url }}');
-{% endif %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['content'] =
-    '<p>Title: {{ marker|escapejs }}</p>' +
-    '<p>Airport code: {{ marker.airport_code|escapejs }}</p>' +
-    '<p>Address: <pre>{{ marker.address|escapejs }}</pre></p>' +
-    '<p>Phone: {{ marker.phone|escapejs }}</p>' +
-    '<p>Fax: {{ marker.fax|escapejs }}</p>' +
-    '<p>Email: {{ marker.email|escapejs }}</p>' +
-    '<p><a href="{{ marker.url|escapejs }}">Visit their website</a></p>';
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['window'] = new google.maps.InfoWindow({
-    content: markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['content']
-});
-google.maps.event.addListener(
-    markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'],
-    'click',
-    function(){
-        if (open_marker != '') {
-            open_marker.close();
-        }
-        open_marker = markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['window'];
-        markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['window'].open(
-            map,
-            markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker']
-        );
-});
-
-{% endfor %}
-{% if gmap_center_lng %} 
-        new_center = new google.maps.LatLng({{ gmap_center_lat }}, {{ gmap_center_lng }});
-        map.setCenter(new_center);
-        map.setZoom(10);   
-{% endif %}
-
-window.markers = markers
-
-}
-
 function toggleCategory(category) {
     var markers = window.markers
     for (marker in window.markers[category]) {
@@ -90,3 +10,68 @@ function toggleCategory(category) {
     }
     return false;
 }
+
+$(document).ready(function() {
+
+    var myLatlng = new Array();
+    var open_marker = '';
+    
+    myLatlng[0] = new google.maps.LatLng(28.5000, -81.4500);
+    
+    var map = new google.maps.Map(document.getElementById("gmap_canvas"), {
+        zoom: 1,
+        center: myLatlng[0],
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+   
+    var markers = []
+    
+    $.getJSON('/map/markers.json',function(data){
+        var categories = new Array();
+        var sub_categories = new Array();
+        $.each(data, function(key,item){
+            var latLng = new google.maps.LatLng(item.fields.latitude,item.fields.longitude)
+            markers[item.fields.name] = {}
+            markers[item.fields.name]['marker'] = new google.maps.Marker({
+                position: latLng,
+                map : map,
+                title: item.fields.name
+            })
+            var content = '<span class="name">'+item.fields.name+'</span><br/><span class="phone">'+item.fields.phone+'</span><br/><span class="email">'+item.fields.email+'</span><br/><span class="url">'+item.fields.url+'</span><br/>'
+            markers[item.fields.name]['window'] = new google.maps.InfoWindow({
+                content: content
+            });
+            google.maps.event.addListener(
+                markers[item.fields.name]['marker'], 'click', function(){
+                    if (open_marker != '') {
+                        open_marker.close();
+                    }
+                    open_marker = markers[item.fields.name]['window'];
+                    open_marker.open(
+                        map,
+                        markers[item.fields.name]['marker']
+                    );
+                }
+            );
+            if ($.inArray(item.fields.category,categories) == -1){
+                categories.push(item.fields.category)
+                $('#gmap_categories').append('<a href="#category_'+item.fields.category+'">'+item.fields.category+'</a>')
+            }
+            $.each(item.fields.sub_categories,function(item){
+                if ($.inArray(item,sub_categories) == -1){
+                    sub_categories.push(item)
+                    $('#gmap_sub_categories').append('<a href="#sub_category_'+item+'">'+item+'</a>')
+                }
+            })
+            console.log(item)
+        })
+    })
+ 
+    google.maps.event.addListener(map, 'click', function(){
+        if (open_marker != '') {
+            open_marker.close();
+        }
+        open_marker = '';
+    });
+    
+})
