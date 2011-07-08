@@ -2,22 +2,24 @@ from django.db import models
 from gmap.utils import geolocate
 
 
-class MarkerType(models.Model):
-    category_name = models.CharField("type", max_length=200, unique=True)
-    category_icon = models.ImageField("icon",
-            blank=True, upload_to="gmap-icons/")
-    category_shadow = models.ImageField("icon shadow",
-            blank=True, upload_to="gmap-icons/")
-
+class MarkerCategory(models.Model):
+    name = models.CharField('type', max_length=200, unique=True)
+    icon = models.ImageField('icon', blank=True, upload_to='gmap-icons/')
+    shadow = models.ImageField('icon shadow', blank=True, upload_to='gmap-icons/')
     def __unicode__(self):
-        return self.category_name
+        return self.name
 
+class MarkerSubCategory(models.Model):
+    name = models.CharField('Name', max_length=200, unique=True)
+    def __unicode__(self):
+        return self.name
 
 class MapMarker(models.Model):
     name = models.CharField(max_length=200)
     latitude = models.CharField(max_length=20, blank=True)
     longitude = models.CharField(max_length=20, blank=True)
-    marker_type = models.ForeignKey(MarkerType, "category_name")
+    category = models.ForeignKey('MarkerCategory')
+    sub_categories = models.ManyToManyField(MarkerSubCategory,related_name='sub_categories')
     airport_code = models.CharField(max_length=6, blank=True)
     address = models.TextField(max_length=200)
     phone = models.CharField(max_length=40, blank=True)

@@ -1,11 +1,11 @@
 from django.contrib import admin
-from gmap.models import MapMarker, MarkerType
+from gmap.models import MapMarker, MarkerCategory, MarkerSubCategory
 
 
 class MarkerAdmin(admin.ModelAdmin):
     list_display = [
             'name',
-            'marker_type',
+            'category',
             'airport_code',
             'address',
             'phone',
@@ -22,8 +22,6 @@ class MarkerInline(admin.TabularInline):
     extra = 1
 
 
-class MarkerTypeAdmin(admin.ModelAdmin):
-    inlines = [MarkerInline, ]
-
 admin.site.register(MapMarker, MarkerAdmin)
-admin.site.register(MarkerType, MarkerTypeAdmin)
+admin.site.register(MarkerCategory)
+admin.site.register(MarkerSubCategory)

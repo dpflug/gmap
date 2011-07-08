@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render, render_to_response
 from gmap.utils import geolocate
-from gmap.models import MapMarker, MarkerType
+from gmap.models import MapMarker
 
 
 def showmap(request, address='', category=''):

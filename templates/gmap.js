@@ -36,11 +36,11 @@ markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'] 
     map: map,
     title: "{{ marker|escapejs }}"
 });
-{% if marker.marker_type.category_icon %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setIcon('{{ marker.marker_type.category_icon.url }}');
+{% if marker.marker_type.icon %}
+markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setIcon('{{ marker.marker_type.icon.url }}');
 {% endif %}
-{% if marker.marker_type.category_shadow %}
-markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setShadow('{{ marker.marker_type.category_shadow.url }}');
+{% if marker.marker_type.shadow %}
+markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['marker'].setShadow('{{ marker.marker_type.shadow.url }}');
 {% endif %}
 markers['{{ marker.marker_type|escapejs }}']['{{ marker|escapejs }}']['content'] =
     '<p>Title: {{ marker|escapejs }}</p>' +
