@@ -1,6 +1,6 @@
 import re
 from django import template
-from gmap.models import MarkerType, MapMarker
+from gmap.models import MarkerCategory, MapMarker
 
 register = template.Library()
 
@@ -13,14 +13,21 @@ class GmapMarkers(template.Node):
         context[self.var_name] = MapMarker.objects.all()
 
 
-class GmapMarkerType(template.Node):
+class GmapMarkerCategory(template.Node):
     def __init__(self, var_name):
         self.var_name = var_name
 
     def render(self, context):
-        context[self.var_name] = MarkerType.objects.all()
+        context[self.var_name] = MarkerCategory.objects.all()
         return ''
 
+class GmapMarkerSubCategory(template.Node):
+    def __init__(self, var_name):
+        self.var_name = var_name
+
+    def render(self, context):
+        context[self.var_name] = MarkerSubCategory.objects.all()
+        return ''
 
 def marker_types_tag(parser, token):
     try:
@@ -32,7 +39,7 @@ def marker_types_tag(parser, token):
     var_name = re.search(r'as (\w+)', arg).groups()[0]
     if not var_name:
         raise template.TemplateSyntaxError("%r tag had invalid arguments")
-    return GmapMarkerType(var_name)
+    return GmapMarkerCategory(var_name)
 
 
 def markers_tag(parser, token):
