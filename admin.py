@@ -5,9 +5,12 @@ from gmap.models import MapMarker, MarkerCategory, MarkerSubCategory
 class MarkerAdmin(admin.ModelAdmin):
     list_display = [
             'name',
+            'contact_title',
             'category',
+            'contact_name',
             'airport_code',
             'address',
+            'airport_name',
             'phone',
             'fax',
             'email',
