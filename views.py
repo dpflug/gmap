@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from gmap.utils import geolocate
-from gmap.models import MapMarker
+from gmap.models import MapMarker, MarkerCategory
 
 def showmap(request, address='', category=''):
     context = {}
@@ -36,6 +36,10 @@ def showmap(request, address='', category=''):
 
 def markers(request):
     data = serializers.serialize("json", MapMarker.objects.all(),use_natural_keys=True)
+    return HttpResponse(data, mimetype='applicaton/javascript')
+    
+def categories(request):
+    data = serializers.serialize("json", MarkerCategory.objects.all().order_by('position'),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
 
 def gmap_search(request):

@@ -8,6 +8,7 @@ class MarkerCategoryManager(models.Manager):
 class MarkerCategory(models.Model):
     objects = MarkerCategoryManager()
     name = models.CharField('type', max_length=200, unique=True)
+    position = models.IntegerField();
     icon = models.ImageField('icon', blank=True, upload_to='gmap-icons/')
     shadow = models.ImageField('icon shadow', blank=True, upload_to='gmap-icons/')
     def natural_key(self):
