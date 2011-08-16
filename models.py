@@ -10,6 +10,7 @@ class MarkerCategory(models.Model):
     name = models.CharField('type', max_length=200, unique=True)
     position = models.IntegerField(default=0);
     icon = models.ImageField('icon', blank=True, upload_to='gmap-icons/')
+    platinum_icon = models.ImageField('platinum icon', blank=True, upload_to='gmap-icons/')
     shadow = models.ImageField('icon shadow', blank=True, upload_to='gmap-icons/')
     def natural_key(self):
         return self.name  
