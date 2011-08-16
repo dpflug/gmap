@@ -10,6 +10,7 @@ class MarkerAdmin(admin.ModelAdmin):
             'contact_name',
             'airport_code',
             'address',
+            'platinum',
             'airport_name',
             'phone',
             'fax',

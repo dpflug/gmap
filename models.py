@@ -30,6 +30,7 @@ class MapMarker(models.Model):
     latitude = models.CharField(max_length=20, blank=True)
     longitude = models.CharField(max_length=20, blank=True)
     category = models.ForeignKey('MarkerCategory')
+    platinum = models.BooleanField('Platinum Partner', default=False)
     sub_categories = models.ManyToManyField(MarkerSubCategory,related_name='sub_categories')
     contact_name = models.CharField(max_length=20, blank=True)
     contact_title = models.CharField(max_length=50, blank=True)
