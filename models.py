@@ -175,7 +175,8 @@ class MapMarker(models.Model):
 
         # ...like this one!
         for subcategory in subcategories:
-            self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
+	    if subcategory:
+		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)

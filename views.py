@@ -143,7 +143,7 @@ def read_csv(request):
                     marker = MapMarker()
                     
                 try:
-                    marker.from_csv(row, row_id, errors)
+	            marker.from_csv(row, row_id, errors)
 
                 except Exception as inst:
                     errors.append("%s : Unable to import entry - %s" % (row_id, inst))

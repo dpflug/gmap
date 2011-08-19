@@ -6,5 +6,5 @@ urlpatterns = patterns('',
     url(r'^categories.json$', categories, name="categories"),
     url(r'^search/?', gmap_search, name="gmap_search"),
     url(r'^(?P<address>\w+)$', showmap, name="show_map"),
-    #url(r'^csv/?', dump_csv, name="dump_csv"),
+    url(r'^csv/?', dump_csv, name="dump_csv"),
 )
