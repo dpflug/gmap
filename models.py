@@ -86,6 +86,8 @@ class MapMarker(models.Model):
     airport_name = models.CharField(max_length=20, blank=True)
     airport_code = models.CharField(max_length=6, blank=True)
     address = models.TextField(max_length=200)
+    state = models.CharField(max_length=20, blank=True)
+    country = models.CharField(max_length=20, blank=True)
     phone = models.CharField(max_length=40, blank=True)
     fax = models.CharField(max_length=40, blank=True)
     email = models.EmailField(blank=True)

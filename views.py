@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
-from gmap.utils import geolocate
+from gmap.utils import geolocate, georeverse
 from gmap.models import MapMarker, MarkerCategory
 
 import csv
@@ -78,6 +78,25 @@ def dump_csv(request):
         '''
 
     return response
+
+def populatefields(request):
+    all_markers = MapMarker.objects.all()
+    start_time = time.time()
+
+    # loop over all map markers and update their state and country fields
+    for marker in all_markers:
+        reverse_addy = georeverse(marker.latitude, marker.longitude)
+
+        if reverse_addy['country'] != False:
+            marker.country = reverse_addy['country']
+
+        if reverse_addy['state'] != False:
+            marker.state = reverse_addy['state']
+        
+        marker.save()
+        
+    end_time = time.time() 
+    return HttpResponse(end_time - start_time)
 
 # TODO - move this out of views
 #
