@@ -4,12 +4,18 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
 from gmap.utils import geolocate, georeverse
 from gmap.models import MapMarker, MarkerCategory
+from gmap.forms import MapSearchForm
 
 import csv
 import tempfile
 import time
 
 import gmap.utils
+
+def index(request):
+    form = MapSearchForm()
+
+    return render(request, 'gmap.html', {'form': form})
 
 def showmap(request, address='', category=''):
     context = {}
