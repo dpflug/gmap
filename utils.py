@@ -30,6 +30,44 @@ def geolocate(location, sensor=False):
         return None
 
 
+def georeverse(lat, lon):
+    # construct url for reverse geocoding with google-maps
+    url = "http://maps.googleapis.com/maps/api/geocode/json?"
+    url += urllib.urlencode({'latlng': lat + ',' + lon, 'sensor': 'false'})
+
+    # retrieve and load google-map data
+    data = urllib2.urlopen(url).read()
+    data = json.loads(data)
+
+    # if request goes through, return the state and country of the location
+    if data['status'] == 'OK':
+        address_components = data['results'][0]['address_components']
+
+        # these probably shouldn't be booleans (test with None data-type at some point)
+        country = False
+        state = False
+
+        for component in address_components:
+
+            try:
+                if component['types'][0] == 'country':
+                    country = component['long_name']
+
+                if component['types'][0] == 'administrative_area_level_1':
+                    state = component['long_name']
+            except Exception:
+                pass
+
+        return ({
+                'state': state,
+                'country': country
+               })
+    return ({
+            'state': False,
+            'country': False
+           })
+
+
 class UTF8Recoder:
     """
     Iterator that reads an encoded stream and reencodes the input to UTF-8

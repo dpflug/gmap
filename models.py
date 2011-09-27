@@ -95,6 +95,8 @@ class MapMarker(models.Model):
     airport_name = models.CharField(max_length=20, blank=True)
     airport_code = models.CharField(max_length=6, blank=True)
     address = models.TextField(max_length=200)
+    state = models.CharField(max_length=20, blank=True)
+    country = models.CharField(max_length=20, blank=True)
     phone = models.CharField(max_length=40, blank=True)
     fax = models.CharField(max_length=40, blank=True)
     email = models.EmailField(blank=True)
@@ -137,7 +139,7 @@ class MapMarker(models.Model):
 
             self.name, cat, plat, self.contact_name, self.contact_title = row[0:5] 
             self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[5:10]
-            self.email, self.url, state, country = row[10:SUBCAT_IDX]
+            self.email, self.url, self.state, self.country = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
