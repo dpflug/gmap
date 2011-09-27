@@ -21,11 +21,13 @@ def geolocate(location, sensor=False):
     url += urllib.urlencode({'address': location, 'sensor': sensor})
     data = urllib2.urlopen(url).read()
     data = json.loads(data)
-    if data['status'] == 'OK':
+    if data and data['status'] == 'OK':
         return({
                'latitude': data['results'][0]['geometry']['location']['lat'],
                'longitude': data['results'][0]['geometry']['location']['lng']
                })
+    else:
+        return None
 
 
 class UTF8Recoder:
@@ -39,6 +41,7 @@ class UTF8Recoder:
         return self
 
     def next(self):
+        #return self.reader.next().decode("cp1252").encode("utf-8")
         return self.reader.next().encode("utf-8")
 
 class UnicodeReader:
@@ -47,7 +50,8 @@ class UnicodeReader:
     which is encoded in the given encoding.
     """
 
-    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+    #def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
+    def __init__(self, f, dialect=csv.excel, encoding="cp1252", **kwds):
         f = UTF8Recoder(f, encoding)
         self.reader = csv.reader(f, dialect=dialect, **kwds)
 

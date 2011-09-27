@@ -39,8 +39,8 @@ INVERSE_SUBCATEGORY = dict((v, k) for k, v in SUBCATEGORY_LOOKUP.iteritems())
 
 # name, category, platinum partner, contacT_name, contact_title, airport_name, airport_code, address, phone, fax, email, url, sub_category1, ..., sub_categoryN
 
-#SUBCAT_IDX = 14
-SUBCAT_IDX = 12
+SUBCAT_IDX = 14
+#SUBCAT_IDX = 12
 
 #NAME_COLUMN = 2
 NAME_COLUMN = 0
@@ -74,6 +74,15 @@ class MarkerSubCategory(models.Model):
     def __unicode__(self):
         return self.name
 
+class GeolocateFailure(Exception):
+
+    def __init__(self, message, address):
+        self.message = message
+        self.address = address
+
+    def __str__(self):
+        return '%s - %s' % (self.message, self.address)
+        
 class MapMarker(models.Model):
     name = models.CharField(max_length=200)
     latitude = models.CharField(max_length=20, blank=True)
@@ -95,9 +104,14 @@ class MapMarker(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.latitude and not self.longitude:
-            latlng = geolocate(self.address)
-            self.latitude = latlng['latitude']
-            self.longitude = latlng['longitude']
+            latlng = geolocate(repr(self.address))
+
+            if latlng != None:
+                self.latitude = latlng['latitude']
+                self.longitude = latlng['longitude']
+
+            else:
+                raise GeolocateFailure("Failed to geolocate address", self.address)
 
         super(MapMarker, self).save(*args, **kwargs)
 
@@ -121,14 +135,17 @@ class MapMarker(models.Model):
 
         try:
 
-            #self.latitude, self.longitude, self.name, cat, plat, self.contact_name, self.contact_title = row[0:7] 
             self.name, cat, plat, self.contact_name, self.contact_title = row[0:5] 
-            #self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[7:12]
             self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[5:10]
-            #self.email, self.url = row[12:SUBCAT_IDX]
-            self.email, self.url = row[10:SUBCAT_IDX]
-        
-            subcategories = row[SUBCAT_IDX:]
+            self.email, self.url, state, country = row[10:SUBCAT_IDX]
+
+            subcat_string = row[SUBCAT_IDX]
+
+            if ',' in subcat_string:
+                subcategories = subcat_string.split(',')
+
+            else:
+                subcategories = [subcat_string]
 
         except IndexError:
             error_string = "Entry does not contain required number of fields: %s < %s" % (len(row), SUBCAT_IDX)
@@ -158,7 +175,7 @@ class MapMarker(models.Model):
 
         elif not subcategories[0]:
             local_errors = True
-            row[SUBCATEGORY_COLUMN]('<font color="red">INSERT_SUBCATEGORY</font>')
+            row[SUBCATEGORY_COLUMN] = '<font color="red">INSERT_SUBCATEGORY</font>'
 
         if local_errors:
             error_string = ', '.join(row)
@@ -171,16 +188,20 @@ class MapMarker(models.Model):
 
         # object's gotta be in the DB before it can get M2M mapping...
         #
-        self.save()
+        try:
+            self.save()
+
+        except GeolocateFailure as inst:
+            errors.append('%s : %s' % (row_id, inst))
+            return
 
         # ...like this one!
         for subcategory in subcategories:
-	    if subcategory:
-		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
+	        if subcategory:
+        		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)
-
 
     # Expected csv format: 
     #

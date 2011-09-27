@@ -79,8 +79,6 @@ def dump_csv(request):
 
     return response
 
-# TODO - move this out of views
-#
 def read_csv(request):
 
     if request.method == 'POST' and request.FILES.has_key('datafile'):
@@ -111,14 +109,13 @@ def read_csv(request):
                     marker = ''
 
                     try:
-                        #marker = MapMarker.objects.get(name=row[2])
                         marker = MapMarker.objects.get(name=row[0])
 
                     except:
                         marker = MapMarker()
 
                     try:
-                        marker.from_csv(row, row_id, errors)
+                        marker.from_csv(row, row_id + 1, errors)
 
                     except Exception as inst:
                         errors.append("%s : Unable to import entry - %s" % (row_id, inst))
@@ -136,14 +133,13 @@ def read_csv(request):
                 marker = ''
 
                 try:
-                    #marker = MapMarker.objects.get(name=row[2])
                     marker = MapMarker.objects.get(name=row[0])
 
                 except:
                     marker = MapMarker()
                     
                 try:
-	            marker.from_csv(row, row_id, errors)
+	                marker.from_csv(row, row_id + 1, errors)
 
                 except Exception as inst:
                     errors.append("%s : Unable to import entry - %s" % (row_id, inst))
@@ -151,6 +147,15 @@ def read_csv(request):
                 num_processed = row_id
 
             delta = time.clock() - delta
+
+        if len(errors) > 1:
+            # Strip off errors result from Excel export garbage (the bottom two entries)
+            #
+            bottoms = errors[-2:]
+            rows = [row.split(':')[0].strip() for row in bottoms]
+
+            if int(rows[0]) == row_id:
+                errors = errors[0:-2]
 
         if errors:
             return render_to_response('gmap_import_errors.html', {'errors' : errors})
