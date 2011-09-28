@@ -12,5 +12,5 @@ class ModifiedChoiceField(forms.ModelChoiceField):
         return 'No Data'
 
 class MapSearchForm(forms.Form):
-    state = ModifiedChoiceField(queryset=MapMarker.objects.filter(country='United States').values('state').distinct(), label='')
+    state = ModifiedChoiceField(queryset=MapMarker.objects.filter(country='USA').values('state').distinct(), label='')
     country = ModifiedChoiceField(queryset=MapMarker.objects.values('country').distinct(), label='')
