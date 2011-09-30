@@ -50,6 +50,24 @@ CATEGORY_COLUMN = 1
 ADDRESS_COLUMN = 7
 SUBCATEGORY_COLUMN = SUBCAT_IDX
 
+class SalesBoundary(models.Model):
+    boundary_code = models.CharField('Boundary Code', max_length=75)
+    owner = models.ForeignKey('SalesDirector');
+    def __unicode__(self):
+        return self.boundary_code
+
+class SalesDirector(models.Model):
+    name = models.CharField('Name', max_length=100, unique=True)
+    title = models.CharField(max_length=50, blank=True)
+    phone = models.CharField('Phone Number', max_length=40, blank=True)
+    email = models.EmailField('Email', blank=True)
+    airport_code = models.CharField(max_length=8, blank=True)
+    airport_name = models.CharField(max_length=50, blank=True)
+    url = models.URLField(blank=True)
+    country = models.CharField(max_length=50, blank=True)
+    def __unicode__(self):
+        return self.name
+
 class MarkerCategoryManager(models.Manager):
     def get_by_natural_key(self,name):
         return self.get(name=name)
