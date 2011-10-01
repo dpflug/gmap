@@ -2,9 +2,11 @@ from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response
-from gmap.utils import geolocate, georeverse
-from gmap.models import MapMarker, MarkerCategory
+from gmap.utils import geolocate, georeverse, csvByLine
+from gmap.models import MapMarker, MarkerCategory, SalesDirector, SalesBoundary
 from gmap.forms import MapSearchForm
+
+from django.db.models import Q
 
 import csv
 import tempfile
@@ -16,6 +18,28 @@ def index(request):
     form = MapSearchForm()
 
     return render(request, 'gmap.html', {'form': form})
+   
+def newsales(args):
+    try:
+        director_name, code = tuple(args)
+    except:
+        err = open("Errors.log","a")
+        err.write("Issues getting tuple from: %s\n" % args )
+        err.close()
+        return
+        
+    director, new_director = SalesDirector.objects.get_or_create(name=director_name)
+    boundary, created = SalesBoundary.objects.get_or_create(boundary_code=code, owner=director)
+    
+    if(new_director):
+        err = open("Errors.log","a")
+        err.write("We had to make a new director named: %s\n" % director_name)
+        err.close()
+        
+def director_import():
+    csvByLine("relationships.csv", ',', newsales)
+    
+
 
 def showmap(request, address='', category=''):
     context = {}
@@ -47,11 +71,18 @@ def showmap(request, address='', category=''):
 
 
 def markers(request):
-    data = serializers.serialize("json", MapMarker.objects.all(),use_natural_keys=True)
+    #Show all categories but Sales Centers
+    data = serializers.serialize("json", MapMarker.objects.filter(~Q(category__pk = 2)).order_by('category'),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
     
 def categories(request):
     data = serializers.serialize("json", MarkerCategory.objects.all().order_by('position'),use_natural_keys=True)
+    return HttpResponse(data, mimetype='applicaton/javascript')
+    
+    
+def director_by_boundary(request, boundary_code):
+    #get a director based on a boundarycode (zip/postal/country code)
+    data = serializers.serialize("json", SalesDirector.objects.filter(salesboundary__boundary_code = boundary_code),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
 
 def gmap_search(request):
