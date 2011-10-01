@@ -24,13 +24,15 @@ class MarkerInline(admin.TabularInline):
     model = MapMarker
     exclude = ('latitude', 'longitude')
     extra = 1
-    
+
 class BoundaryAdmin(admin.ModelAdmin):
     list_display = ['boundary_code', 'owner']
 
+class DirectorAdmin(admin.ModelAdmin):
+    list_display = ['name', 'country']
 
 admin.site.register(MapMarker, MarkerAdmin)
 admin.site.register(MarkerCategory)
 admin.site.register(MarkerSubCategory)
-admin.site.register(SalesDirector)
+admin.site.register(SalesDirector, DirectorAdmin)
 admin.site.register(SalesBoundary, BoundaryAdmin)

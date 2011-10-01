@@ -53,6 +53,8 @@ SUBCATEGORY_COLUMN = SUBCAT_IDX
 class SalesBoundary(models.Model):
     boundary_code = models.CharField('Boundary Code', max_length=75)
     owner = models.ForeignKey('SalesDirector');
+    class Meta:
+        unique_together = ("boundary_code", "owner")
     def __unicode__(self):
         return self.boundary_code
 

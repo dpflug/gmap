@@ -2,7 +2,13 @@ import json
 import urllib
 import urllib2
 
-import csv, codecs, cStringIO
+import csv, codecs, cStringIO, fileinput
+
+
+def csvByLine(csvFile, seperator, lineHandler):
+    for row_id, line in enumerate(UnicodeReader(open(csvFile))):
+        print "Calling Line handler for %s" % line
+        lineHandler( line )
 
 def geolocate(location, sensor=False):
     """
@@ -65,7 +71,9 @@ def georeverse(lat, lon):
     return ({
             'state': False,
             'country': False
-           })
+           })     
+           
+
 
 
 class UTF8Recoder:
