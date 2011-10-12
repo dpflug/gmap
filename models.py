@@ -1,7 +1,7 @@
 from django.db import models
 from gmap.utils import geolocate
 
-CATEGORY_LOOKUP = {u'1' : 'Authorized Service Center (ASC)', u'2' : 'Aircraft Sales Representative or Center', 
+CATEGORY_LOOKUP = {u'1' : 'Cirrus Authorized Service Center (ASC)', u'2' : 'Cirrus Sales Representative or Center', 
                    u'3' : 'Cirrus Training Center (CTC)', u'4' : 'Cirrus Standardized Instructor Pilot (CSIP)'}
 
 INVERSE_CATEGORY = dict((v, k) for k, v in CATEGORY_LOOKUP.iteritems())
@@ -39,7 +39,7 @@ INVERSE_SUBCATEGORY = dict((v, k) for k, v in SUBCATEGORY_LOOKUP.iteritems())
 
 # name, category, platinum partner, contacT_name, contact_title, airport_name, airport_code, address, phone, fax, email, url, sub_category1, ..., sub_categoryN
 
-SUBCAT_IDX = 14
+SUBCAT_IDX = 16
 #SUBCAT_IDX = 12
 
 #NAME_COLUMN = 2
@@ -123,7 +123,9 @@ class MapMarker(models.Model):
     airport_name = models.CharField(max_length=20, blank=True)
     airport_code = models.CharField(max_length=6, blank=True)
     address = models.TextField(max_length=200)
+    city = models.CharField(max_length=200, blank=True)
     state = models.CharField(max_length=20, blank=True)
+    zipcode = models.CharField(max_length=10, blank=True)
     country = models.CharField(max_length=20, blank=True)
     phone = models.CharField(max_length=40, blank=True)
     fax = models.CharField(max_length=40, blank=True)
@@ -136,14 +138,15 @@ class MapMarker(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.latitude and not self.longitude:
-            latlng = geolocate(repr(self.address))
+            full_address = "%s, %s, %s, %s, %s" % (self.address, self.city, self.state, self.zipcode, self.country)
+            latlng = geolocate(repr(full_address))
 
             if latlng != None:
                 self.latitude = latlng['latitude']
                 self.longitude = latlng['longitude']
 
             else:
-                raise GeolocateFailure("Failed to geolocate address", self.address)
+                raise GeolocateFailure("Failed to geolocate address for %s" % self.name, full_address )
 
         super(MapMarker, self).save(*args, **kwargs)
 
@@ -169,7 +172,7 @@ class MapMarker(models.Model):
 
             self.name, cat, plat, self.contact_name, self.contact_title = row[0:5] 
             self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[5:10]
-            self.email, self.url, self.state, self.country = row[10:SUBCAT_IDX]
+            self.email, self.url, self.state, self.country, self.city, self.zipcode = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
@@ -216,7 +219,7 @@ class MapMarker(models.Model):
 
         self.platinum = True if plat == '1' else False
          
-        self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip("'")])
+        self.category = MarkerCategory.objects.get(pk = cat.strip().strip("'") )
 
         # object's gotta be in the DB before it can get M2M mapping...
         #
@@ -230,7 +233,7 @@ class MapMarker(models.Model):
         # ...like this one!
         for subcategory in subcategories:
 	        if subcategory:
-        		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
+        		self.sub_categories.add(MarkerSubCategory.objects.get(pk = subcategory.strip().strip("'") ) )
 
         try:
             self.iso_code = CountryISOCode.objects.get(long_name = self.country)
