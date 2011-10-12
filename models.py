@@ -1,7 +1,7 @@
 from django.db import models
 from gmap.utils import geolocate
 
-CATEGORY_LOOKUP = {u'1' : 'Authorized Service Center (ASC)', u'2' : 'Aircraft Sales Representative or Center', 
+CATEGORY_LOOKUP = {u'1' : 'Cirrus Authorized Service Center (ASC)', u'2' : 'Cirrus Sales Representative or Center', 
                    u'3' : 'Cirrus Training Center (CTC)', u'4' : 'Cirrus Standardized Instructor Pilot (CSIP)'}
 
 INVERSE_CATEGORY = dict((v, k) for k, v in CATEGORY_LOOKUP.iteritems())
