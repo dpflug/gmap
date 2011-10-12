@@ -208,7 +208,7 @@ class MapMarker(models.Model):
 
         self.platinum = True if plat == 'True' else False
          
-        self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip("'")])
+        self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip().strip("'")])
 
         # object's gotta be in the DB before it can get M2M mapping...
         #
@@ -222,7 +222,7 @@ class MapMarker(models.Model):
         # ...like this one!
         for subcategory in subcategories:
 	        if subcategory:
-        		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
+        		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip().strip("'")]))
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)
