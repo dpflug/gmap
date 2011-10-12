@@ -72,7 +72,7 @@ def showmap(request, address='', category=''):
 
 def markers(request):
     #Show all categories but Sales Centers
-    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position'),use_natural_keys=True)
+    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position', 'name'),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
     
 def categories(request):
