@@ -103,6 +103,14 @@ class GeolocateFailure(Exception):
     def __str__(self):
         return '%s - %s' % (self.message, self.address)
         
+class CountryISOCode(models.Model):
+    long_name = models.CharField(max_length=200)
+    iso_3= models.CharField(max_length=3, blank=True)
+    iso_2 = models.CharField(max_length=2, blank=True)
+
+    def __unicode__(self):
+        return self.long_name
+
 class MapMarker(models.Model):
     name = models.CharField(max_length=200)
     latitude = models.CharField(max_length=20, blank=True)
@@ -121,6 +129,8 @@ class MapMarker(models.Model):
     fax = models.CharField(max_length=40, blank=True)
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)
+
+    iso_code = models.ForeignKey('CountryISOCode')
 
     # Make sure we update the lat/long with the location
     def save(self, *args, **kwargs):
@@ -204,7 +214,7 @@ class MapMarker(models.Model):
             errors.append(('%s : %s' % (row_id, error_string)))
             return
 
-        self.platinum = True if plat == 'True' else False
+        self.platinum = True if plat == '1' else False
          
         self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip("'")])
 
@@ -221,6 +231,23 @@ class MapMarker(models.Model):
         for subcategory in subcategories:
 	        if subcategory:
         		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip("'")]))
+
+        try:
+            self.iso_code = CountryISOCode.objects.get(long_name = self.country)
+
+        except:
+
+            try:
+                self.iso_code = CountryISOCode.objects.get(iso_3 = self.country)
+
+            except:
+
+                try:
+                    self.iso_code = CountryISOCode.objects.get(iso_2 = self.country)
+
+                except:
+                    error_string = "Unable to map %s to ISO long name, two letter abbreviation, or three letter abbreviation" % self.country
+                    errors.append(('%s : %s' % (row_id, error_string)))
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)
@@ -243,3 +270,5 @@ class MapMarker(models.Model):
         return [self.name, INVERSE_CATEGORY[self.category.name], str(self.platinum), self.contact_name, self.contact_title,
                 self.airport_name, self.airport_code, self.address, self.phone, self.fax,
                 self.email, self.url] + [INVERSE_SUBCATEGORY[subcat.name] for subcat in self.sub_categories.all()]
+
+    

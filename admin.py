@@ -1,5 +1,5 @@
 from django.contrib import admin
-from gmap.models import MapMarker, MarkerCategory, MarkerSubCategory, SalesDirector, SalesBoundary
+from gmap.models import MapMarker, MarkerCategory, MarkerSubCategory, SalesDirector, SalesBoundary, CountryISOCode
 
 
 class MarkerAdmin(admin.ModelAdmin):
@@ -34,5 +34,6 @@ class DirectorAdmin(admin.ModelAdmin):
 admin.site.register(MapMarker, MarkerAdmin)
 admin.site.register(MarkerCategory)
 admin.site.register(MarkerSubCategory)
+admin.site.register(CountryISOCode)
 admin.site.register(SalesDirector, DirectorAdmin)
 admin.site.register(SalesBoundary, BoundaryAdmin)
