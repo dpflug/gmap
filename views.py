@@ -72,7 +72,7 @@ def showmap(request, address='', category=''):
 
 def markers(request):
     #Show all categories but Sales Centers
-    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position', 'name'),use_natural_keys=True)
+    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position'),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
     
 def categories(request):
@@ -194,11 +194,11 @@ def read_csv(request):
                 except:
                     marker = MapMarker()
                     
-                #try:
-                marker.from_csv(row, row_id + 1, errors)
+                try:
+                    marker.from_csv(row, row_id + 1, errors)
 
-                #except Exception as inst:
-                 #   errors.append("%s : Unable to import entry - %s" % (row_id, inst))
+                except Exception as inst:
+                   errors.append("%s : Unable to import entry - %s" % (row_id, inst))
 
                 num_processed = row_id
 
