@@ -128,14 +128,15 @@ class MapMarker(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.latitude and not self.longitude:
-            latlng = geolocate(repr(self.address))
+            full_address = "%s, %s, %s, %s, %s" % (self.address, self.city, self.state, self.zipcode, self.country)
+            latlng = geolocate(repr(full_address))
 
             if latlng != None:
                 self.latitude = latlng['latitude']
                 self.longitude = latlng['longitude']
 
             else:
-                raise GeolocateFailure("Failed to geolocate address", self.address)
+                raise GeolocateFailure("Failed to geolocate address for %s" % self.name, full_address )
 
         super(MapMarker, self).save(*args, **kwargs)
 
@@ -208,7 +209,7 @@ class MapMarker(models.Model):
 
         self.platinum = True if plat == '1' else False
          
-        self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip().strip("'")])
+        self.category = MarkerCategory.objects.get(pk = cat.strip().strip("'") )
 
         # object's gotta be in the DB before it can get M2M mapping...
         #
@@ -222,7 +223,7 @@ class MapMarker(models.Model):
         # ...like this one!
         for subcategory in subcategories:
 	        if subcategory:
-        		self.sub_categories.add(MarkerSubCategory.objects.get(name = SUBCATEGORY_LOOKUP[subcategory.strip().strip("'")]))
+        		self.sub_categories.add(MarkerSubCategory.objects.get(pk = subcategory.strip().strip("'") ) )
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)
