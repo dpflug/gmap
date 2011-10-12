@@ -206,7 +206,7 @@ class MapMarker(models.Model):
             errors.append(('%s : %s' % (row_id, error_string)))
             return
 
-        self.platinum = True if plat == 'True' else False
+        self.platinum = True if plat == '1' else False
          
         self.category = MarkerCategory.objects.get(name = CATEGORY_LOOKUP[cat.strip().strip("'")])
 
