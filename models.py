@@ -39,7 +39,7 @@ INVERSE_SUBCATEGORY = dict((v, k) for k, v in SUBCATEGORY_LOOKUP.iteritems())
 
 # name, category, platinum partner, contacT_name, contact_title, airport_name, airport_code, address, phone, fax, email, url, sub_category1, ..., sub_categoryN
 
-SUBCAT_IDX = 16
+SUBCAT_IDX = 18
 #SUBCAT_IDX = 12
 
 #NAME_COLUMN = 2
@@ -172,7 +172,7 @@ class MapMarker(models.Model):
 
             self.name, cat, plat, self.contact_name, self.contact_title = row[0:5] 
             self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[5:10]
-            self.email, self.url, self.state, self.country, self.city, self.zipcode = row[10:SUBCAT_IDX]
+            self.email, self.url, self.state, self.country, self.city, self.zipcode, self.latitude, self.longitude = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
