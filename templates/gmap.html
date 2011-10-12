@@ -70,11 +70,10 @@
                 <span><input type="radio" name="locator" value="zip" checked />ZIP Code</span>
                 <input id="zipcode" type="text" name="zipcode" />
                 <select id="radius">
-                    <option value="500">Select Distance</option>
                     <option value="100">100 miles</option>
                     <option value="200">200 miles</option>
                     <option value="300">300 miles</option>
-                    <option value="500">500 miles</option>
+                    <option selected="selected" value="500">500 miles</option>
                 </select><br />
                 <span><input type="radio" name="locator" value="state" />State</span>
                 {{ form.state }}
