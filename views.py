@@ -135,6 +135,39 @@ def populatefields(request):
     end_time = time.time() 
     return HttpResponse(end_time - start_time)
 
+def process_sales_row(row_id, row, errors):
+
+    try:
+        sales_director = SalesDirector.objects.get(name=row[0])
+
+    except:
+        sales_director = SalesDirector()
+
+    sales_director.from_csv(row, row_id + 1, errors)
+
+def process_marker_row(row_id, row, errors):
+
+    marker = ''
+
+    try:
+        marker = MapMarker.objects.get(name=row[0])
+
+    except:
+        marker = MapMarker()
+
+    marker.from_csv(row, row_id + 1, errors)
+
+# TODO: return errors?
+def process_row(row_id, row, errors):
+
+    if row[1] == '2':
+
+        process_sales_row(row_id, row, errors)
+
+    else:
+        
+        process_marker_row(row_id, row, errors)
+
 def read_csv(request):
 
     if request.method == 'POST' and request.FILES.has_key('datafile'):
@@ -162,16 +195,8 @@ def read_csv(request):
 
                 for row_id, row in enumerate(gmap.utils.UnicodeReader(local_file)):
 
-                    marker = ''
-
                     try:
-                        marker = MapMarker.objects.get(name=row[0])
-
-                    except:
-                        marker = MapMarker()
-
-                    try:
-                        marker.from_csv(row, row_id + 1, errors)
+                        process_row(row_id, row, errors)
 
                     except Exception as inst:
                         errors.append("%s : Unable to import entry - %s" % (row_id, inst))
@@ -186,34 +211,15 @@ def read_csv(request):
 
             for row_id, row in enumerate(gmap.utils.UnicodeReader(request.FILES['datafile'])):
 
-                marker = ''
+                #try:
+                process_row(row_id, row, errors)
 
-                try:
-                    marker = MapMarker.objects.get(name=row[0])
-
-                except:
-                    marker = MapMarker()
-                    
-                try:
-                    marker.from_csv(row, row_id + 1, errors)
-
-                except Exception as inst:
-                   errors.append("%s : Unable to import entry - %s" % (row_id, inst))
+                #except Exception as inst:
+                #    errors.append("%s : Unable to import entry - %s" % (row_id, inst))
 
                 num_processed = row_id
 
             delta = time.clock() - delta
-
-        '''
-        if len(errors) > 1:
-            # Strip off errors result from Excel export garbage (the bottom two entries)
-            #
-            bottoms = errors[-2:]
-            rows = [row.split(':')[0].strip() for row in bottoms]
-
-            if int(rows[0]) == row_id:
-                errors = errors[0:-2]
-        '''
 
         if errors:
             return render_to_response('gmap_import_errors.html', {'errors' : errors})
