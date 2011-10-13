@@ -1,10 +1,10 @@
 from django import forms
-from gmap.models import MapMarker
+from gmap.models import MapMarker, CountryISOCode
 
 class ModifiedChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        if 'country' in obj:
-            return obj['country']
+        if 'long_name' in obj:
+            return obj['long_name']
 
         if 'state' in obj:
             return obj['state']
@@ -13,4 +13,4 @@ class ModifiedChoiceField(forms.ModelChoiceField):
 
 class MapSearchForm(forms.Form):
     state = ModifiedChoiceField(queryset=MapMarker.objects.filter(country='USA').values('state').distinct(), label='')
-    country = ModifiedChoiceField(queryset=MapMarker.objects.values('country').distinct(), label='')
+    country = ModifiedChoiceField(queryset=CountryISOCode.objects.values('long_name'), label='')
