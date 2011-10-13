@@ -204,7 +204,6 @@ def read_csv(request):
 
             delta = time.clock() - delta
 
-        '''
         if len(errors) > 1:
             # Strip off errors result from Excel export garbage (the bottom two entries)
             #
@@ -213,7 +212,6 @@ def read_csv(request):
 
             if int(rows[0]) == row_id:
                 errors = errors[0:-2]
-        '''
 
         if errors:
             return render_to_response('gmap_import_errors.html', {'errors' : errors})
