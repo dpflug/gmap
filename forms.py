@@ -13,4 +13,4 @@ class ModifiedChoiceField(forms.ModelChoiceField):
 
 class MapSearchForm(forms.Form):
     state = ModifiedChoiceField(queryset=MapMarker.objects.filter(country__iso_3='USA').values('state').distinct(), label='')
-    country = ModifiedChoiceField(queryset=CountryISOCode.objects.values('long_name'), label='')
+    country = ModifiedChoiceField(queryset=CountryISOCode.objects.order_by('long_name').values('long_name'), label='')
