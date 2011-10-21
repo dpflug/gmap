@@ -24,20 +24,25 @@ def newsales(args):
         director_name, code = tuple(args)
     except:
         err = open("Errors.log","a")
-        err.write("Issues getting tuple from: %s\n" % args )
+        err_text = "Issues getting tuple from: %s\n" % args
+        err.write(err_text)
         err.close()
-        return
+        return err_text
         
     director, new_director = SalesDirector.objects.get_or_create(name=director_name)
     boundary, created = SalesBoundary.objects.get_or_create(boundary_code=code, owner=director)
     
     if(new_director):
         err = open("Errors.log","a")
-        err.write("We had to make a new director named: %s\n" % director_name)
+        err_text = "We had to make a new director named: %s\n" % director_name
+        err.write(err_text)
         err.close()
+        return err_text
+    return ""
         
-def director_import():
-    csvByLine("relationships.csv", ',', newsales)
+def director_import(request):
+    errors = csvByLine(request.FILES['datafile'], newsales)
+    return HttpResponse(errors.replace('\n', '<br />'))
     
 
 
