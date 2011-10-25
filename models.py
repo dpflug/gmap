@@ -91,7 +91,7 @@ class SalesDirector(models.Model):
 
             self.name, cat, plat, self.contact_name, self.title = row[0:5] 
             self.airport_name, self.airport_code, self.address, self.phone, fax = row[5:10]
-            self.email, url, self.state, iso_3, self.city, self.zipcode, latitude, longitude = row[10:SUBCAT_IDX]
+            self.email, self.url, self.state, iso_3, self.city, self.zipcode, latitude, longitude = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
