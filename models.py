@@ -65,6 +65,10 @@ class SalesDirector(models.Model):
     email = models.EmailField('Email', blank=True)
     airport_code = models.CharField(max_length=8, blank=True)
     airport_name = models.CharField(max_length=50, blank=True)
+    address = models.TextField(max_length=200, blank=True)
+    city = models.CharField(max_length=200, blank=True)
+    state = models.CharField(max_length=20, blank=True)
+    zipcode = models.CharField(max_length=10, blank=True)
     url = models.URLField(blank=True)
     country = models.ForeignKey('CountryISOCode')
 
@@ -86,8 +90,8 @@ class SalesDirector(models.Model):
         try:
 
             self.name, cat, plat, self.contact_name, self.title = row[0:5] 
-            self.airport_name, self.airport_code, address, self.phone, fax = row[5:10]
-            self.email, url, state, iso_3, self.city, zipcode, latitude, longitude = row[10:SUBCAT_IDX]
+            self.airport_name, self.airport_code, self.address, self.phone, fax = row[5:10]
+            self.email, url, self.state, iso_3, self.city, self.zipcode, latitude, longitude = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
