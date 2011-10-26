@@ -271,9 +271,9 @@ class MapMarker(models.Model):
             local_errors = True
             row[CATEGORY_COLUMN] = '<font color="red">INSERT_CATEGORY</font>'
 
-        if not self.address:
-            local_errors = True
-            row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
+        #if not self.address:
+        #    local_errors = True
+        #    row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
 
         if not len(subcategories):
             local_errors = True
