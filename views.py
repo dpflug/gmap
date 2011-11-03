@@ -16,8 +16,9 @@ import gmap.utils
 
 def index(request):
     form = MapSearchForm()
-
-    return render(request, 'gmap.html', {'form': form})
+    response = render(request, 'gmap.html', {'form': form})
+    response['Cache-Control'] = 'no-cache'
+    return response
    
 def newsales(args):
     try:
