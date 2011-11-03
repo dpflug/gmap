@@ -25,20 +25,25 @@ def newsales(args):
         director_name, code = tuple(args)
     except:
         err = open("Errors.log","a")
-        err.write("Issues getting tuple from: %s\n" % args )
+        err_text = "Issues getting tuple from: %s\n" % args
+        err.write(err_text)
         err.close()
-        return
+        return err_text
         
     director, new_director = SalesDirector.objects.get_or_create(name=director_name)
     boundary, created = SalesBoundary.objects.get_or_create(boundary_code=code, owner=director)
     
     if(new_director):
         err = open("Errors.log","a")
-        err.write("We had to make a new director named: %s\n" % director_name)
+        err_text = "We had to make a new director named: %s\n" % director_name
+        err.write(err_text)
         err.close()
+        return err_text
+    return ""
         
-def director_import():
-    csvByLine("relationships.csv", ',', newsales)
+def director_import(request):
+    errors = csvByLine(request.FILES['datafile'], newsales)
+    return HttpResponse(errors.replace('\n', '<br />'))
     
 
 
@@ -73,7 +78,7 @@ def showmap(request, address='', category=''):
 
 def markers(request):
     #Show all categories but Sales Centers
-    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position'),use_natural_keys=True)
+    data = serializers.serialize("json", MapMarker.objects.all().order_by('category__position', 'city'),use_natural_keys=True)
     return HttpResponse(data, mimetype='applicaton/javascript')
     
 def categories(request):
@@ -136,6 +141,39 @@ def populatefields(request):
     end_time = time.time() 
     return HttpResponse(end_time - start_time)
 
+def process_sales_row(row_id, row, errors):
+
+    try:
+        sales_director = SalesDirector.objects.get(name=row[0])
+
+    except:
+        sales_director = SalesDirector()
+
+    sales_director.from_csv(row, row_id + 1, errors)
+
+def process_marker_row(row_id, row, errors):
+
+    marker = ''
+
+    try:
+        marker = MapMarker.objects.get(name=row[0])
+
+    except:
+        marker = MapMarker()
+
+    marker.from_csv(row, row_id + 1, errors)
+
+# TODO: return errors?
+def process_row(row_id, row, errors):
+
+    if row[1] == '2':
+
+        process_sales_row(row_id, row, errors)
+
+    else:
+        
+        process_marker_row(row_id, row, errors)
+
 def read_csv(request):
 
     if request.method == 'POST' and request.FILES.has_key('datafile'):
@@ -163,16 +201,8 @@ def read_csv(request):
 
                 for row_id, row in enumerate(gmap.utils.UnicodeReader(local_file)):
 
-                    marker = ''
-
                     try:
-                        marker = MapMarker.objects.get(name=row[0])
-
-                    except:
-                        marker = MapMarker()
-
-                    try:
-                        marker.from_csv(row, row_id + 1, errors)
+                        process_row(row_id, row, errors)
 
                     except Exception as inst:
                         errors.append("%s : Unable to import entry - %s" % (row_id, inst))
@@ -187,19 +217,11 @@ def read_csv(request):
 
             for row_id, row in enumerate(gmap.utils.UnicodeReader(request.FILES['datafile'])):
 
-                marker = ''
+                #try:
+                process_row(row_id, row, errors)
 
-                try:
-                    marker = MapMarker.objects.get(name=row[0])
-
-                except:
-                    marker = MapMarker()
-                    
-                try:
-                    marker.from_csv(row, row_id + 1, errors)
-
-                except Exception as inst:
-                   errors.append("%s : Unable to import entry - %s" % (row_id, inst))
+                #except Exception as inst:
+                #    errors.append("%s : Unable to import entry - %s" % (row_id, inst))
 
                 num_processed = row_id
 

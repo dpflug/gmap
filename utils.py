@@ -5,10 +5,12 @@ import urllib2
 import csv, codecs, cStringIO, fileinput
 
 
-def csvByLine(csvFile, seperator, lineHandler):
-    for row_id, line in enumerate(UnicodeReader(open(csvFile))):
+def csvByLine(csvFile, lineHandler):
+    errors = ''
+    for row_id, line in enumerate( UnicodeReader(csvFile) ):
         print "Calling Line handler for %s" % line
-        lineHandler( line )
+        errors = ''.join( [errors, lineHandler( line )] )
+    return errors
 
 def geolocate(location, sensor=False):
     """

@@ -195,7 +195,7 @@ class MapMarker(models.Model):
     contact_title = models.CharField(max_length=50, blank=True)
     airport_name = models.CharField(max_length=100, blank=True)
     airport_code = models.CharField(max_length=6, blank=True)
-    address = models.TextField(max_length=200)
+    address = models.TextField(max_length=200, blank=True)
     city = models.CharField(max_length=200, blank=True)
     state = models.CharField(max_length=50, blank=True)
     zipcode = models.CharField(max_length=10, blank=True)
@@ -243,7 +243,7 @@ class MapMarker(models.Model):
 
             self.name, cat, plat, self.contact_name, self.contact_title = row[0:5] 
             self.airport_name, self.airport_code, self.address, self.phone, self.fax = row[5:10]
-            self.email, self.url, self.state, self.country, self.city, self.zipcode, self.latitude, self.longitude = row[10:SUBCAT_IDX]
+            self.email, self.url, self.state, iso_3, self.city, self.zipcode, self.latitude, self.longitude = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
@@ -271,9 +271,9 @@ class MapMarker(models.Model):
             local_errors = True
             row[CATEGORY_COLUMN] = '<font color="red">INSERT_CATEGORY</font>'
 
-        if not self.address:
-            local_errors = True
-            row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
+        #if not self.address:
+        #    local_errors = True
+        #    row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
 
         if not len(subcategories):
             local_errors = True
@@ -292,6 +292,23 @@ class MapMarker(models.Model):
          
         self.category = MarkerCategory.objects.get(pk = cat.strip().strip("'") )
 
+        try:
+            self.country = CountryISOCode.objects.get(long_name = iso_3)
+
+        except:
+
+            try:
+                self.country = CountryISOCode.objects.get(iso_3 = iso_3)
+
+            except:
+
+                try:
+                    self.country = CountryISOCode.objects.get(iso_2 = iso_3)
+
+                except:
+                    error_string = "Unable to map %s to ISO long name, two letter abbreviation, or three letter abbreviation" % iso_3
+                    errors.append(('%s : %s' % (row_id, error_string)))
+
         # object's gotta be in the DB before it can get M2M mapping...
         #
         try:
@@ -306,22 +323,6 @@ class MapMarker(models.Model):
 	        if subcategory:
         		self.sub_categories.add(MarkerSubCategory.objects.get(pk = subcategory.strip().strip("'") ) )
 
-        try:
-            self.iso_code = CountryISOCode.objects.get(long_name = self.country)
-
-        except:
-
-            try:
-                self.iso_code = CountryISOCode.objects.get(iso_3 = self.country)
-
-            except:
-
-                try:
-                    self.iso_code = CountryISOCode.objects.get(iso_2 = self.country)
-
-                except:
-                    error_string = "Unable to map %s to ISO long name, two letter abbreviation, or three letter abbreviation" % self.country
-                    errors.append(('%s : %s' % (row_id, error_string)))
 
         # Ask django really, really nicely not to insert our object twice
         self.save(force_update = True)
