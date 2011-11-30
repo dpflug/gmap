@@ -65,8 +65,12 @@ class SalesDirector(models.Model):
     email = models.EmailField('Email', blank=True)
     airport_code = models.CharField(max_length=8, blank=True)
     airport_name = models.CharField(max_length=50, blank=True)
+    address = models.TextField(max_length=200, blank=True)
+    city = models.CharField(max_length=200, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    zipcode = models.CharField(max_length=10, blank=True)
     url = models.URLField(blank=True)
-    country = models.ForeignKey('CountryISOCode')
+    country = models.ForeignKey('CountryISOCode', blank=True)
 
     def from_csv(self, row, row_id, errors):
 
@@ -86,8 +90,8 @@ class SalesDirector(models.Model):
         try:
 
             self.name, cat, plat, self.contact_name, self.title = row[0:5] 
-            self.airport_name, self.airport_code, address, self.phone, fax = row[5:10]
-            self.email, url, state, iso_3, self.city, zipcode, latitude, longitude = row[10:SUBCAT_IDX]
+            self.airport_name, self.airport_code, self.address, self.phone, fax = row[5:10]
+            self.email, self.url, self.state, iso_3, self.city, self.zipcode, latitude, longitude = row[10:SUBCAT_IDX]
 
             subcat_string = row[SUBCAT_IDX]
 
@@ -174,28 +178,28 @@ class GeolocateFailure(Exception):
         
 class CountryISOCode(models.Model):
     long_name = models.CharField(max_length=200)
-    iso_3= models.CharField(max_length=3, blank=True)
-    iso_2 = models.CharField(max_length=2, blank=True)
+    iso_3= models.CharField(max_length=10, blank=True)
+    iso_2 = models.CharField(max_length=10, blank=True)
 
     def __unicode__(self):
         return self.long_name
 
 class MapMarker(models.Model):
     name = models.CharField(max_length=200)
-    latitude = models.CharField(max_length=20, blank=True)
-    longitude = models.CharField(max_length=20, blank=True)
+    latitude = models.CharField(max_length=30, blank=True)
+    longitude = models.CharField(max_length=30, blank=True)
     category = models.ForeignKey('MarkerCategory')
     platinum = models.BooleanField('Platinum Partner', default=False)
     sub_categories = models.ManyToManyField(MarkerSubCategory,related_name='sub_categories')
-    contact_name = models.CharField(max_length=20, blank=True)
+    contact_name = models.CharField(max_length=50, blank=True)
     contact_title = models.CharField(max_length=50, blank=True)
-    airport_name = models.CharField(max_length=20, blank=True)
+    airport_name = models.CharField(max_length=100, blank=True)
     airport_code = models.CharField(max_length=6, blank=True)
-    address = models.TextField(max_length=200)
+    address = models.TextField(max_length=200, blank=True)
     city = models.CharField(max_length=200, blank=True)
-    state = models.CharField(max_length=20, blank=True)
+    state = models.CharField(max_length=50, blank=True)
     zipcode = models.CharField(max_length=10, blank=True)
-    country = models.ForeignKey('CountryISOCode')
+    country = models.ForeignKey('CountryISOCode', null=True, blank=True)
     phone = models.CharField(max_length=40, blank=True)
     fax = models.CharField(max_length=40, blank=True)
     email = models.EmailField(blank=True)
@@ -267,9 +271,9 @@ class MapMarker(models.Model):
             local_errors = True
             row[CATEGORY_COLUMN] = '<font color="red">INSERT_CATEGORY</font>'
 
-        if not self.address:
-            local_errors = True
-            row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
+        #if not self.address:
+        #    local_errors = True
+        #    row[ADDRESS_COLUMN] = '<font color="red">INSERT_ADDRESS</font>'
 
         if not len(subcategories):
             local_errors = True

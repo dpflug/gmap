@@ -16,8 +16,9 @@ import gmap.utils
 
 def index(request):
     form = MapSearchForm()
-
-    return render(request, 'gmap.html', {'form': form})
+    response = render(request, 'gmap.html', {'form': form})
+    response['Cache-Control'] = 'no-cache'
+    return response
    
 def newsales(args):
     try:
@@ -225,6 +226,15 @@ def read_csv(request):
                 num_processed = row_id
 
             delta = time.clock() - delta
+
+        if len(errors) > 1:
+            # Strip off errors result from Excel export garbage (the bottom two entries)
+            #
+            bottoms = errors[-2:]
+            rows = [row.split(':')[0].strip() for row in bottoms]
+
+            if int(rows[0]) == row_id:
+                errors = errors[0:-2]
 
         if errors:
             return render_to_response('gmap_import_errors.html', {'errors' : errors})
