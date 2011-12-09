@@ -181,6 +181,9 @@ class CountryISOCode(models.Model):
     iso_3= models.CharField(max_length=10, blank=True)
     iso_2 = models.CharField(max_length=10, blank=True)
 
+    def natural_key(self):
+        return self.long_name
+
     def __unicode__(self):
         return self.long_name
 

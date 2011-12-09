@@ -156,7 +156,7 @@ def process_marker_row(row_id, row, errors):
     marker = ''
 
     try:
-        marker = MapMarker.objects.get(name=row[0])
+        marker = MapMarker.objects.get(name=row[0], zipcode=row[15])
 
     except:
         marker = MapMarker()
