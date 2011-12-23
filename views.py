@@ -186,9 +186,10 @@ def read_csv(request):
         # the with block is completes
         num_processed = -1
         delta = 0
-                    
         errors = []
+
         if request.FILES['datafile'].multiple_chunks():
+            MapMarker.objects.all().delete()
 
             delta = time.clock()
 
