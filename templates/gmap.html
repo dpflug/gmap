@@ -53,20 +53,40 @@
             </div>
         </div>
         <div class="form">
+
+        <div class="right-box">    
             <div class="region_buttons">
                 <a href="/static/img/region_map.png" class="bigmap usmap">
-	            <img src="/static/img/icons/region_map_button.png" />
+                <img src="/static/img/icons/region_map_button.png" />
                 </a>
 
                 <a href="/static/img/INTL_Sales_Team.pdf" class="internationalmap" target="_blank">
-	            <img src="/static/img/icons/country_map_button.png" />
+                <img src="/static/img/icons/country_map_button.png" />
+                </a>
+
+                 <a href="/static/img/ChinaSalesList.pdf" class="internationalmap" target="_blank">
+                <img src="/static/img/icons/china_map_button.png" />
                 </a>
             </div>
+
             <div class="locator_image">
                 <img src="/static/img/locator_plane.png" />
             </div>
+        
+        </div>
+
             <form id="gmap_search_form">
-                <p>Select a search method.</p>
+
+            <p>Use the locator below to find a Regional Sales Director , 
+            International Sales Center, Cirrus Sales Center, Authorized 
+            Service Center (ASC), Cirrus Training Center (CTC), or 
+            Cirrus Standardized Instructor Pilot (CSIP).
+            </p>
+
+            <br/>
+            
+             <hr />
+
                 <span><input type="radio" name="locator" value="zip" checked />ZIP Code</span>
                 <input id="zipcode" type="text" name="zipcode" />
                 <select id="radius">
@@ -87,6 +107,8 @@
         </div>
     </section>
 </div>
+
+
 <div class="section" id="theshops">
     <section>
         <p class="results"></p>
@@ -94,9 +116,12 @@
         <p class="multiplesales"></p>
         <div id="gmap_categories"><ul></ul></div>
         <ul class="locations">
-            <!-- Use js/jquery to add locations here $('ul.locations').append(stuff); -->
+         <!--    Use js/jquery to add locations here $('ul.locations').append(stuff); -->
         </ul>
     </section>
 </div>
+
+
+
 </div>
 {% endblock main %}
